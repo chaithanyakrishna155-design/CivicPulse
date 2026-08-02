@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Status Update</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, #1565c0, #0d47a1);
+            color: white;
+            padding: 35px 30px;
+            text-align: center;
+        }
+        
+        .header .logo-icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .header p {
+            margin: 5px 0 0;
+            opacity: 0.85;
+            font-size: 14px;
+        }
+        
+        /* ===== CONTENT ===== */
+        .content {
+            padding: 35px 30px 30px;
+            background: #ffffff;
+        }
+        
+        .content h2 {
+            color: #1565c0;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+        
+        .content .greeting {
+            color: #333;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .content .message-text {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        /* ===== COMPLAINT DETAILS ===== */
+        .complaint-details {
+            background: #f5f7fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #1565c0;
+        }
+        
+        .complaint-details .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #e8ecf0;
+        }
+        
+        .complaint-details .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .complaint-details .detail-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .complaint-details .detail-value {
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .complaint-details .complaint-id {
+            color: #1565c0;
+            font-weight: 700;
+        }
+        
+        /* ===== STATUS BADGE ===== */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-pending { background: #ff9800; }
+        .status-assigned { background: #03a9f4; }
+        .status-progress { background: #2196f3; }
+        .status-resolved { background: #4caf50; }
+        .status-rejected { background: #f44336; }
+        .status-closed { background: #607d8b; }
+        
+        /* ===== BUTTON ===== */
+        .btn-container {
+            text-align: center;
+            margin: 25px 0 10px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 35px;
+            background: #1565c0;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(21, 101, 192, 0.3);
+        }
+        
+        .btn:hover {
+            background: #0d47a1;
+            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.4);
+            text-decoration: none;
+        }
+        
+        /* ===== DIVIDER ===== */
+        .divider {
+            border: none;
+            height: 1px;
+            background: #e8ecf0;
+            margin: 25px 0;
+        }
+        
+        /* ===== INFO BOX ===== */
+        .info-box {
+            background: #f0f7ff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #1565c0;
+            border: 1px solid #d4e4f7;
+        }
+        
+        .info-box i {
+            font-style: normal;
+            margin-right: 8px;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #f5f7fa;
+            padding: 25px 30px 20px;
+            text-align: center;
+            border-top: 1px solid #e8ecf0;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+            color: #888;
+            font-size: 12px;
+        }
+        
+        .footer .footer-links {
+            margin: 10px 0;
+        }
+        
+        .footer .footer-links a {
+            color: #1565c0;
+            text-decoration: none;
+            font-size: 13px;
+            margin: 0 10px;
+        }
+        
+        .footer .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .footer .footer-disclaimer {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #999;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 25px 20px;
+            }
+            
+            .content h2 {
+                font-size: 19px;
+            }
+            
+            .complaint-details .detail-row {
+                flex-direction: column;
+                padding: 4px 0;
+            }
+            
+            .complaint-details .detail-value {
+                padding-left: 0;
+            }
+            
+            .btn {
+                display: block;
+                padding: 14px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            .footer .footer-links a {
+                display: inline-block;
+                margin: 5px 8px;
+            }
+        }
+        
+        /* ===== DARK MODE SUPPORT (for email clients) ===== */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a2e !important;
+            }
+            
+            .container {
+                background-color: #16213e !important;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+            }
+            
+            .content {
+                background-color: #16213e !important;
+            }
+            
+            .content h2 {
+                color: #4fc3f7 !important;
+            }
+            
+            .content .greeting {
+                color: #e0e0e0 !important;
+            }
+            
+            .content .message-text {
+                color: #b0b0b0 !important;
+            }
+            
+            .complaint-details {
+                background: #1a2744 !important;
+                border-left-color: #4fc3f7 !important;
+            }
+            
+            .complaint-details .detail-row {
+                border-bottom-color: #2a3a5a !important;
+            }
+            
+            .complaint-details .detail-label {
+                color: #a0b0c0 !important;
+            }
+            
+            .complaint-details .detail-value {
+                color: #e0e0e0 !important;
+            }
+            
+            .complaint-details .complaint-id {
+                color: #4fc3f7 !important;
+            }
+            
+            .info-box {
+                background: #1a2744 !important;
+                color: #4fc3f7 !important;
+                border-color: #2a4a6a !important;
+            }
+            
+            .footer {
+                background: #1a2744 !important;
+                border-top-color: #2a3a5a !important;
+            }
+            
+            .footer p {
+                color: #8888aa !important;
+            }
+            
+            .footer .footer-links a {
+                color: #4fc3f7 !important;
+            }
+            
+            .btn {
+                background: #0d47a1 !important;
+                box-shadow: 0 2px 8px rgba(13, 71, 161, 0.4) !important;
+            }
+            
+            .btn:hover {
+                background: #1565c0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <span class="logo-icon">🏛️</span>
+            <h1>CivicPulse</h1>
+            <p>Smart Governance Platform</p>
+        </div>
+        
+        <!-- ===== CONTENT ===== -->
+        <div class="content">
+            
+            <h2 th:text="${data.title}">Complaint Status Updated</h2>
+            
+            <p class="greeting" th:text="${data.greeting}">Dear Citizen,</p>
+            
+            <p class="message-text" th:text="${data.message}">
+                Your complaint has been updated to a new status.
+            </p>
+            
+            <!-- Complaint Details -->
+            <div class="complaint-details">
+                <div class="detail-row">
+                    <span class="detail-label">📋 Complaint ID</span>
+                    <span class="detail-value complaint-id">#<span th:text="${data.complaintId}">123</span></span>
+                </div>
+                <div class="detail-row" th:if="${data.title}">
+                    <span class="detail-label">📝 Title</span>
+                    <span class="detail-value" th:text="${data.complaintTitle}">Road Damage</span>
+                </div>
+                <div class="detail-row" th:if="${data.category}">
+                    <span class="detail-label">📁 Category</span>
+                    <span class="detail-value" th:text="${data.category}">Road</span>
+                </div>
+                <div class="detail-row" th:if="${data.location}">
+                    <span class="detail-label">📍 Location</span>
+                    <span class="detail-value" th:text="${data.location}">Mumbai</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">📊 Status</span>
+                    <span class="detail-value">
+                        <span class="status-badge" 
+                              th:classappend="${data.status == 'Pending' ? 'status-pending' : ''}
+                                            ${data.status == 'Assigned' ? 'status-assigned' : ''}
+                                            ${data.status == 'In Progress' ? 'status-progress' : ''}
+                                            ${data.status == 'Resolved' ? 'status-resolved' : ''}
+                                            ${data.status == 'Rejected' ? 'status-rejected' : ''}
+                                            ${data.status == 'Closed' ? 'status-closed' : ''}"
+                              th:text="${data.status}">Resolved</span>
+                    </span>
+                </div>
+                <div class="detail-row" th:if="${data.oldStatus}">
+                    <span class="detail-label">🔄 Previous Status</span>
+                    <span class="detail-value" th:text="${data.oldStatus}">Pending</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">🕐 Updated At</span>
+                    <span class="detail-value" th:text="${data.updatedAt}">2024-01-01 10:00</span>
+                </div>
+                <div class="detail-row" th:if="${data.assignedOfficer}">
+                    <span class="detail-label">👮 Assigned Officer</span>
+                    <span class="detail-value" th:text="${data.assignedOfficer}">Officer Name</span>
+                </div>
+            </div>
+            
+            <!-- Info Box -->
+            <div class="info-box" th:if="${data.status == 'Resolved'}">
+                <span>✅</span> Your complaint has been resolved. If you have any further issues, please feel free to register a new complaint.
+            </div>
+            
+            <div class="info-box" th:if="${data.status == 'Assigned'}">
+                <span>👮</span> An officer has been assigned to your complaint. They will contact you shortly.
+            </div>
+            
+            <div class="info-box" th:if="${data.status == 'In Progress'}">
+                <span>🔄</span> Your complaint is currently being worked on by the assigned officer.
+            </div>
+            
+            <!-- Action Button -->
+            <div class="btn-container">
+                <a th:href="${data.link}" class="btn">📋 View Complaint Details</a>
+            </div>
+            
+            <hr class="divider">
+            
+            <p style="text-align: center; color: #888; font-size: 13px;">
+                <span>💡</span> You can track all your complaints from your dashboard.
+            </p>
+            
+        </div>
+        
+        <!-- ===== FOOTER ===== -->
+        <div class="footer">
+            <p>&copy; 2026 CivicPulse Smart Governance Platform</p>
+            
+            <div class="footer-links">
+                <a href="/login">🔐 Login</a>
+                <a href="/complaints">📋 View All Complaints</a>
+                <a href="/dashboard">📊 Dashboard</a>
+                <a href="/complaint/register">📝 Register Complaint</a>
+            </div>
+            
+            <p class="footer-disclaimer">
+                ⚠️ This is an automated notification. Please do not reply to this email.
+            </p>
+            <p class="footer-disclaimer" style="margin-top: 5px;">
+                If you have any questions, please contact our support team.
+            </p>
+        </div>
+        
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+package com.civicpulse;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+
+@SpringBootApplication
+@EnableJpaRepositories(basePackages = "com.civicpulse.repository")
+@EntityScan(basePackages = "com.civicpulse.entity")
+public class CivicpulseApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(CivicpulseApplication.class, args);
+	}
+
+}

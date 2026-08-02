@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CivicPulse - Register</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+
+:root {
+    --bg: #eaf3ff;
+    --container-bg: #ffffff;
+    --text: #212529;
+    --heading-color: #1565c0;
+    --shadow: 0 0 15px rgba(0,0,0,0.2);
+    --input-bg: #ffffff;
+    --input-border: #ccc;
+    --input-text: #212529;
+    --button-bg: #1565c0;
+    --button-hover: #0d47a1;
+    --button-text: white;
+    --error-color: #dc3545;
+    --error-bg: #f8d7da;
+    --error-border: #f5c6cb;
+    --success-color: #28a745;
+    --success-bg: #d4edda;
+    --success-border: #c3e6cb;
+    --link-color: #1565c0;
+    --label-color: #333;
+}
+
+[data-theme="dark"] {
+    --bg: #121212;
+    --container-bg: #1f1f1f;
+    --text: #ffffff;
+    --heading-color: #4fc3f7;
+    --shadow: 0 0 20px rgba(0,0,0,0.6);
+    --input-bg: #2a2a2a;
+    --input-border: #404040;
+    --input-text: #ffffff;
+    --button-bg: #0d47a1;
+    --button-hover: #1565c0;
+    --button-text: white;
+    --error-color: #ff6b6b;
+    --error-bg: #3a1a1a;
+    --error-border: #5a2a2a;
+    --success-color: #66bb6a;
+    --success-bg: #1a3a2a;
+    --success-border: #2a5a3a;
+    --link-color: #4fc3f7;
+    --label-color: #e0e0e0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    transition: all 0.3s ease;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg);
+    padding: 20px;
+    position: relative;
+}
+
+/* Theme toggle button - positioned at top right */
+.theme-toggle-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.theme-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    background: var(--container-bg);
+    color: var(--text);
+    box-shadow: var(--shadow);
+}
+
+.theme-btn:hover {
+    transform: rotate(30deg) scale(1.1);
+}
+
+.container {
+    width: 420px;
+    max-width: 100%;
+    background: var(--container-bg);
+    padding: 35px 30px 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    color: var(--text);
+    margin-top: 30px;
+}
+
+/* Register Header */
+.register-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.register-header .logo-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.register-header h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--heading-color);
+    margin: 0;
+}
+
+.register-header .subtitle {
+    color: var(--text);
+    opacity: 0.6;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--label-color);
+    margin-bottom: 4px;
+}
+
+.form-group label i {
+    margin-right: 6px;
+    color: var(--heading-color);
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--input-border);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--input-text);
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--heading-color);
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
+}
+
+.input-group input::placeholder {
+    color: var(--input-text);
+    opacity: 0.5;
+}
+
+.input-group .input-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text);
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Password Strength */
+.password-hint {
+    font-size: 12px;
+    color: var(--text);
+    opacity: 0.6;
+    margin-top: 2px;
+    display: block;
+}
+
+.password-strength {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 4px;
+    background: var(--input-border);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.password-strength .strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.password-strength .strength-bar.weak { background: #dc3545; width: 33%; }
+.password-strength .strength-bar.medium { background: #ffc107; width: 66%; }
+.password-strength .strength-bar.strong { background: #28a745; width: 100%; }
+
+/* ===== ALERTS ===== */
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.alert-danger {
+    background-color: var(--error-bg);
+    color: var(--error-color);
+    border: 1px solid var(--error-border);
+}
+
+.alert-success {
+    background-color: var(--success-bg);
+    color: var(--success-color);
+    border: 1px solid var(--success-border);
+}
+
+.alert i {
+    font-size: 20px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-register {
+    width: 100%;
+    padding: 14px;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 5px;
+}
+
+.btn-register:hover {
+    background: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(21, 101, 192, 0.3);
+}
+
+.btn-register:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-register i {
+    margin-right: 8px;
+}
+
+.btn-register .spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s ease-in-out infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== LINKS ===== */
+.links {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.links a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
+
+.links .separator {
+    color: var(--text);
+    opacity: 0.3;
+    margin: 0 8px;
+}
+
+/* ===== DIVIDER ===== */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--input-border);
+}
+
+.divider span {
+    padding: 0 15px;
+    color: var(--text);
+    opacity: 0.5;
+    font-size: 12px;
+}
+
+/* ===== DARK MODE ===== */
+[data-theme="dark"] .theme-btn {
+    background: #1f1f1f;
+    color: white;
+    border: 1px solid #404040;
+}
+
+[data-theme="dark"] input::placeholder {
+    color: #888;
+}
+
+[data-theme="dark"] .input-group input:focus {
+    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.15);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 25px 20px 20px;
+        margin: 60px 10px 15px 10px;
+        border-radius: 10px;
+    }
+    
+    .theme-toggle-container {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .theme-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .register-header h2 {
+        font-size: 22px;
+    }
+    
+    .btn-register {
+        padding: 12px;
+        font-size: 15px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Theme Toggle Button - Fixed at top right -->
+<div class="theme-toggle-container">
+    <button id="themeToggle" class="theme-btn">
+        <i id="themeIcon" class="bi bi-moon-fill"></i>
+    </button>
+</div>
+
+<div class="container">
+
+    <!-- Register Header -->
+    <div class="register-header">
+        <span class="logo-icon">🏛️</span>
+        <h2>Create Account</h2>
+        <p class="subtitle">Join CivicPulse Smart Governance Platform</p>
+    </div>
+
+    <!-- Error Message -->
+    <div th:if="${error}" class="alert alert-danger">
+        <i class="bi bi-exclamation-circle"></i>
+        <span th:text="${error}">Registration failed</span>
+    </div>
+
+    <!-- Success Message -->
+    <div th:if="${success}" class="alert alert-success">
+        <i class="bi bi-check-circle"></i>
+        <span th:text="${success}">Registration successful!</span>
+    </div>
+
+    <form action="/register" method="post" id="registerForm">
+
+        <!-- Full Name -->
+        <div class="form-group">
+            <label for="fullName"><i class="bi bi-person"></i> Full Name</label>
+            <div class="input-group">
+                <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                <span class="input-icon"><i class="bi bi-person"></i></span>
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email"><i class="bi bi-envelope"></i> Email Address</label>
+            <div class="input-group">
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <span class="input-icon"><i class="bi bi-envelope"></i></span>
+            </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="form-group">
+            <label for="phone"><i class="bi bi-phone"></i> Phone Number</label>
+            <div class="input-group">
+                <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
+                <span class="input-icon"><i class="bi bi-phone"></i></span>
+            </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <label for="password"><i class="bi bi-lock"></i> Password</label>
+            <div class="input-group">
+                <input type="password" id="password" name="password" placeholder="Create a password (min 6 characters)" required minlength="6">
+                <span class="input-icon" id="togglePassword" style="cursor: pointer; opacity: 0.6; z-index: 1;" onclick="togglePasswordVisibility()">
+                    <i class="bi bi-eye"></i>
+                </span>
+            </div>
+            <span class="password-hint"><i class="bi bi-info-circle"></i> Minimum 6 characters</span>
+            <div class="password-strength">
+                <div class="strength-bar" id="strengthBar"></div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-register" id="registerBtn">
+            <i class="bi bi-person-plus"></i>
+            <span id="btnText">Create Account</span>
+            <span id="btnSpinner" class="spinner"></span>
+        </button>
+
+    </form>
+
+    <!-- Divider -->
+    <div class="divider">
+        <span>Already have an account?</span>
+    </div>
+
+    <div class="links">
+        <a href="/login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+    </div>
+
+</div>
+
+<script>
+
+// ==========================
+// THEME TOGGLE
+// ==========================
+
+const toggle = document.getElementById("themeToggle");
+const icon = document.getElementById("themeIcon");
+
+function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    if (theme === "dark") {
+        icon.className = "bi bi-sun-fill";
+    } else {
+        icon.className = "bi bi-moon-fill";
+    }
+}
+
+toggle.addEventListener("click", function() {
+    const current = document.documentElement.getAttribute("data-theme");
+    setTheme(current === "dark" ? "light" : "dark");
+});
+
+// Load saved theme on page load
+document.addEventListener("DOMContentLoaded", function() {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+});
+
+// ==========================
+// PASSWORD VISIBILITY TOGGLE
+// ==========================
+
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.querySelector('#togglePassword i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.className = 'bi bi-eye-slash';
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.className = 'bi bi-eye';
+    }
+}
+
+// ==========================
+// PASSWORD STRENGTH
+// ==========================
+
+const passwordField = document.getElementById('password');
+
+if (passwordField) {
+    passwordField.addEventListener('input', function() {
+        const password = this.value;
+        const strengthBar = document.getElementById('strengthBar');
+        
+        if (password.length === 0) {
+            strengthBar.className = 'strength-bar';
+            return;
+        }
+        
+        let strength = 0;
+        
+        // Length check
+        if (password.length >= 8) strength++;
+        if (password.length >= 12) strength++;
+        
+        // Contains number
+        if (/\d/.test(password)) strength++;
+        
+        // Contains uppercase and lowercase
+        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+        
+        // Contains special character
+        if (/[^a-zA-Z0-9]/.test(password)) strength++;
+        
+        let level = 'weak';
+        if (strength >= 4) level = 'strong';
+        else if (strength >= 2) level = 'medium';
+        
+        strengthBar.className = 'strength-bar ' + level;
+    });
+}
+
+// ==========================
+// FORM SUBMISSION WITH LOADING
+// ==========================
+
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const btn = document.getElementById('registerBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const password = document.getElementById('password');
+    
+    // Validate password length
+    if (password.value.length < 6) {
+        e.preventDefault();
+        showError('Password must be at least 6 characters');
+        return;
+    }
+    
+    // Show loading state
+    btnText.textContent = 'Creating account...';
+    btnSpinner.style.display = 'inline-block';
+    btn.disabled = true;
+    btn.querySelector('i').style.display = 'none';
+});
+
+// ==========================
+// SHOW ERROR
+// ==========================
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-danger';
+    errorDiv.innerHTML = '<i class="bi bi-exclamation-circle"></i> <span>' + message + '</span>';
+    
+    const container = document.querySelector('.container');
+    const form = document.getElementById('registerForm');
+    container.insertBefore(errorDiv, form);
+    
+    setTimeout(function() {
+        errorDiv.remove();
+    }, 5000);
+}
+
+// ==========================
+// SHOW SUCCESS
+// ==========================
+
+function showSuccess(message) {
+    const successDiv = document.createElement('div');
+    successDiv.className = 'alert alert-success';
+    successDiv.innerHTML = '<i class="bi bi-check-circle"></i> <span>' + message + '</span>';
+    
+    const container = document.querySelector('.container');
+    const form = document.getElementById('registerForm');
+    container.insertBefore(successDiv, form);
+    
+    setTimeout(function() {
+        successDiv.remove();
+    }, 5000);
+}
+
+// ==========================
+// KEYBOARD SHORTCUTS
+// ==========================
+
+document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        document.getElementById('registerForm').submit();
+    }
+});
+
+// ==========================
+// AUTO-FOCUS ON PAGE LOAD
+// ==========================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const nameInput = document.getElementById('fullName');
+    if (nameInput && !nameInput.value) {
+        setTimeout(function() {
+            nameInput.focus();
+        }, 300);
+    }
+});
+
+</script>
+
+</body>
+</html>

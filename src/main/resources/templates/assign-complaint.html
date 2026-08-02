@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Assign Complaint | CivicPulse</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+
+:root {
+    --bg: #f4f7fc;
+    --text: #212529;
+    --card-bg: #ffffff;
+    --shadow: 0 4px 10px rgba(0,0,0,0.15);
+    --heading-color: #1565c0;
+    --border-color: #dee2e6;
+    --label-color: #212529;
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --input-text: #212529;
+    --btn-primary: #1565c0;
+    --btn-primary-hover: #0d47a1;
+    --btn-secondary: #6c757d;
+    --btn-secondary-hover: #5a6268;
+    --alert-success-bg: #d4edda;
+    --alert-success-text: #155724;
+    --alert-success-border: #c3e6cb;
+    --alert-danger-bg: #f8d7da;
+    --alert-danger-text: #721c24;
+    --alert-danger-border: #f5c6cb;
+    --alert-info-bg: #d1ecf1;
+    --alert-info-text: #0c5460;
+    --alert-info-border: #bee5eb;
+    --navbar-bg: #1565c0;
+}
+
+[data-theme="dark"] {
+    --bg: #121212;
+    --text: #ffffff;
+    --card-bg: #1f1f1f;
+    --shadow: 0 4px 15px rgba(0,0,0,0.6);
+    --heading-color: #4fc3f7;
+    --border-color: #404040;
+    --label-color: #e0e0e0;
+    --input-bg: #2a2a2a;
+    --input-border: #404040;
+    --input-text: #ffffff;
+    --btn-primary: #0d47a1;
+    --btn-primary-hover: #1565c0;
+    --btn-secondary: #424242;
+    --btn-secondary-hover: #616161;
+    --alert-success-bg: #1a3a2a;
+    --alert-success-text: #8fdfb2;
+    --alert-success-border: #2a5a3a;
+    --alert-danger-bg: #3a1a1a;
+    --alert-danger-text: #ff8f8f;
+    --alert-danger-border: #5a2a2a;
+    --alert-info-bg: #1a2a3a;
+    --alert-info-text: #8fcbdf;
+    --alert-info-border: #2a4a5a;
+    --navbar-bg: #0d1117;
+}
+
+* {
+    transition: all 0.3s ease;
+}
+
+body {
+    background: var(--bg);
+    min-height: 100vh;
+    position: relative;
+    color: var(--text);
+    padding: 0;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background: var(--navbar-bg) !important;
+    padding: 15px 0;
+    box-shadow: var(--shadow);
+}
+
+.navbar-brand {
+    color: white !important;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.theme-btn {
+    width: 45px !important;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    border: none;
+}
+
+.logout-btn {
+    width: auto !important;
+}
+
+/* ===== CONTAINER ===== */
+.container-main {
+    padding: 30px 0 50px 0;
+}
+
+h2 {
+    text-align: center;
+    color: var(--heading-color);
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--text);
+    opacity: 0.7;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+/* ===== CARD ===== */
+.card {
+    box-shadow: var(--shadow);
+    border-radius: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text);
+}
+
+.card .form-label {
+    color: var(--label-color);
+    font-weight: 600;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-control, .form-select {
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid var(--input-border);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    outline: 2px solid var(--heading-color);
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.form-select option {
+    background: var(--input-bg);
+    color: var(--input-text);
+}
+
+.form-control::placeholder {
+    color: var(--input-text);
+    opacity: 0.5;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+    background: var(--btn-primary);
+    border-color: var(--btn-primary);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    background: var(--btn-primary-hover);
+    border-color: var(--btn-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+}
+
+.btn-secondary {
+    background: var(--btn-secondary);
+    border-color: var(--btn-secondary);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background: var(--btn-secondary-hover);
+    border-color: var(--btn-secondary-hover);
+    transform: translateY(-2px);
+}
+
+.btn {
+    margin: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+/* ===== ALERTS ===== */
+.alert {
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-success {
+    background-color: var(--alert-success-bg);
+    color: var(--alert-success-text);
+    border-color: var(--alert-success-border);
+}
+
+.alert-danger {
+    background-color: var(--alert-danger-bg);
+    color: var(--alert-danger-text);
+    border-color: var(--alert-danger-border);
+}
+
+.alert-info {
+    background-color: var(--alert-info-bg);
+    color: var(--alert-info-text);
+    border-color: var(--alert-info-border);
+}
+
+.alert .alert-icon {
+    font-size: 20px;
+}
+
+/* ===== COMPLAINT PREVIEW ===== */
+.complaint-preview {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid var(--border-color);
+    display: none;
+}
+
+.complaint-preview.show {
+    display: block;
+}
+
+.complaint-preview .preview-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.complaint-preview .preview-item:last-child {
+    border-bottom: none;
+}
+
+.complaint-preview .preview-label {
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+.complaint-preview .preview-value {
+    font-weight: 500;
+}
+
+/* ===== LOADING SPINNER ===== */
+.spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== DARK MODE ===== */
+[data-theme="dark"] .theme-btn {
+    background: #1f1f1f;
+    color: white;
+    border: 1px solid #404040;
+}
+
+[data-theme="dark"] .form-select option {
+    background: #1f1f1f;
+    color: white;
+}
+
+[data-theme="dark"] .form-select option:hover {
+    background: #0d47a1;
+}
+
+[data-theme="dark"] .complaint-preview {
+    background: #1a1a1a;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .container-main {
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .card {
+        padding: 15px !important;
+    }
+    
+    .theme-btn {
+        width: 38px !important;
+        height: 38px;
+        font-size: 16px;
+    }
+    
+    .navbar-brand {
+        font-size: 18px;
+    }
+    
+    h2 {
+        font-size: 22px;
+    }
+    
+    .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .btn-primary, .btn-secondary {
+        width: 100%;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <span class="navbar-brand">
+            🏛️ CivicPulse Admin
+        </span>
+        <div class="nav-right">
+            <button id="themeToggle" class="btn btn-light theme-btn">
+                <i id="themeIcon" class="bi bi-moon-fill"></i>
+            </button>
+            <a href="/logout" class="btn btn-danger logout-btn">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="container container-main">
+
+    <h2>👮 Assign Complaint To Officer</h2>
+    <p class="subtitle">Select a complaint and assign it to an available officer</p>
+
+    <div class="card p-4">
+
+        <!-- Success Message -->
+        <div th:if="${success}" class="alert alert-success">
+            <span class="alert-icon">✅</span>
+            <span th:text="${success}">Complaint assigned successfully!</span>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${error}" class="alert alert-danger">
+            <span class="alert-icon">❌</span>
+            <span th:text="${error}">Failed to assign complaint</span>
+        </div>
+
+        <!-- Info Message - No complaints available -->
+        <div th:if="${#lists.isEmpty(complaints)}" class="alert alert-info">
+            <span class="alert-icon">ℹ️</span>
+            <span>No complaints available for assignment. All complaints are either assigned or resolved.</span>
+        </div>
+
+        <form action="/admin/assign-complaint" method="post" id="assignForm">
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="bi bi-file-text"></i> Select Complaint
+                </label>
+                <select name="complaintId" class="form-select" required id="complaintSelect">
+                    <option value="">-- Select Complaint --</option>
+                    <option th:each="complaint:${complaints}"
+                            th:value="${complaint.id}"
+                            th:text="${complaint.id + ' - ' + complaint.title + ' (' + complaint.status + ')'}"
+                            th:data-title="${complaint.title}"
+                            th:data-category="${complaint.category}"
+                            th:data-location="${complaint.location}"
+                            th:data-status="${complaint.status}">
+                    </option>
+                </select>
+                <small class="text-muted" style="display: block; margin-top: 5px; font-size: 12px;">
+                    <i class="bi bi-info-circle"></i> Only unassigned complaints are shown
+                </small>
+            </div>
+
+            <!-- Complaint Preview -->
+            <div id="complaintPreview" class="complaint-preview">
+                <h6><i class="bi bi-file-earmark-text"></i> Complaint Details</h6>
+                <div class="preview-item">
+                    <span class="preview-label">Title:</span>
+                    <span class="preview-value" id="previewTitle">-</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-label">Category:</span>
+                    <span class="preview-value" id="previewCategory">-</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-label">Location:</span>
+                    <span class="preview-value" id="previewLocation">-</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-label">Status:</span>
+                    <span class="preview-value" id="previewStatus">-</span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="bi bi-envelope"></i> Officer Email
+                </label>
+                <input type="email" name="officerEmail" class="form-control" 
+                       placeholder="Enter officer email" required id="officerEmail">
+                <small class="text-muted" style="display: block; margin-top: 5px; font-size: 12px;">
+                    <i class="bi bi-info-circle"></i> Enter the email of the officer to assign this complaint
+                </small>
+            </div>
+
+            <div class="d-flex gap-2" style="flex-wrap: wrap;">
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="bi bi-person-check"></i> 
+                    <span id="btnText">Assign Complaint</span>
+                    <span id="btnSpinner" class="spinner"></span>
+                </button>
+                <a href="/admin/dashboard" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+// ==========================
+// THEME TOGGLE
+// ==========================
+
+const toggle = document.getElementById("themeToggle");
+const icon = document.getElementById("themeIcon");
+
+function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    if (theme === "dark") {
+        icon.className = "bi bi-sun-fill";
+        toggle.classList.remove("btn-light");
+        toggle.classList.add("btn-warning");
+    } else {
+        icon.className = "bi bi-moon-fill";
+        toggle.classList.remove("btn-warning");
+        toggle.classList.add("btn-light");
+    }
+}
+
+toggle.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme");
+    setTheme(current === "dark" ? "light" : "dark");
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+});
+
+// ==========================
+// COMPLAINT PREVIEW
+// ==========================
+
+const complaintSelect = document.getElementById('complaintSelect');
+const preview = document.getElementById('complaintPreview');
+const previewTitle = document.getElementById('previewTitle');
+const previewCategory = document.getElementById('previewCategory');
+const previewLocation = document.getElementById('previewLocation');
+const previewStatus = document.getElementById('previewStatus');
+
+complaintSelect.addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    
+    if (this.value) {
+        previewTitle.textContent = selectedOption.getAttribute('data-title') || '-';
+        previewCategory.textContent = selectedOption.getAttribute('data-category') || '-';
+        previewLocation.textContent = selectedOption.getAttribute('data-location') || '-';
+        previewStatus.textContent = selectedOption.getAttribute('data-status') || '-';
+        preview.classList.add('show');
+    } else {
+        preview.classList.remove('show');
+    }
+});
+
+// ==========================
+// FORM SUBMISSION WITH LOADING
+// ==========================
+
+document.getElementById('assignForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const complaintSelect = document.getElementById('complaintSelect');
+    const officerEmail = document.getElementById('officerEmail');
+    
+    // Validate
+    if (!complaintSelect.value) {
+        e.preventDefault();
+        showAlert('Please select a complaint.', 'danger');
+        return;
+    }
+    
+    if (!officerEmail.value.trim()) {
+        e.preventDefault();
+        showAlert('Please enter an officer email.', 'danger');
+        return;
+    }
+    
+    // Show loading state
+    btnText.textContent = 'Assigning...';
+    btnSpinner.style.display = 'inline-block';
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.7';
+});
+
+// ==========================
+// SHOW ALERT FUNCTION
+// ==========================
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type}`;
+    alertDiv.innerHTML = `
+        <span class="alert-icon">${type === 'success' ? '✅' : type === 'danger' ? '❌' : 'ℹ️'}</span>
+        <span>${message}</span>
+    `;
+    
+    const card = document.querySelector('.card');
+    const form = document.getElementById('assignForm');
+    card.insertBefore(alertDiv, form);
+    
+    setTimeout(() => {
+        alertDiv.style.transition = 'opacity 0.5s ease';
+        alertDiv.style.opacity = '0';
+        setTimeout(() => alertDiv.remove(), 500);
+    }, 5000);
+}
+
+// ==========================
+// KEYBOARD SHORTCUTS
+// ==========================
+
+document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        document.getElementById('assignForm').submit();
+    }
+});
+
+// ==========================
+// AUTO-DISMISS ALERTS
+// ==========================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert:not(.alert-info)');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.transition = 'opacity 0.5s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => {
+                alert.remove();
+            }, 500);
+        }, 5000);
+    });
+});
+
+</script>
+
+</body>
+
+</html>

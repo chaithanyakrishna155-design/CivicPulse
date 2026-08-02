@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CivicPulse Dashboard</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+
+:root{
+    --bg:#f5f7fa;
+    --text:#212529;
+    --card:#ffffff;
+    --navbar:#1565c0;
+    --footer:#1565c0;
+    --shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+[data-theme="dark"]{
+    --bg:#121212;
+    --text:#ffffff;
+    --card:#1f1f1f;
+    --navbar:#0d1117;
+    --footer:#0d1117;
+    --shadow:0 5px 15px rgba(0,0,0,.6);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    transition:all .3s ease;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100vh;
+}
+
+/* Navbar styles */
+.navbar{
+    background:var(--navbar) !important;
+    padding:15px 0;
+    box-shadow:var(--shadow);
+}
+
+.navbar-brand{
+    color:white!important;
+    font-size:25px;
+    font-weight:bold;
+}
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+/* Notification Bell */
+.notification-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-btn {
+    width: 45px !important;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.notification-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff4444;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 22px;
+    text-align: center;
+    border: 2px solid var(--navbar);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.notification-badge.zero {
+    display: none;
+}
+
+.theme-btn{
+    width:45px!important;
+    height:45px;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:20px;
+    border:none;
+}
+
+.logout-btn{
+    width:auto!important;
+}
+
+.container-main{
+    padding-top:50px;
+    padding-bottom:50px;
+}
+
+.welcome{
+    text-align:center;
+    margin-bottom:45px;
+}
+
+.welcome h2{
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.welcome p{
+    font-size:18px;
+}
+
+.stats-card{
+    border:none;
+    border-radius:15px;
+    color:white;
+    box-shadow:var(--shadow);
+}
+
+.total{
+    background:#1565c0;
+}
+
+.pending{
+    background:#ff9800;
+}
+
+.inprogress{
+    background:#03a9f4;
+}
+
+.resolved{
+    background:#4caf50;
+}
+
+.card{
+    background:var(--card);
+    color:var(--text);
+    border:none;
+    border-radius:15px;
+    box-shadow:var(--shadow);
+    height:100%;
+}
+
+.card:hover{
+    transform:translateY(-6px);
+}
+
+.card .btn{
+    width:100%;
+}
+
+.action-icon{
+    font-size:60px;
+    margin-bottom:15px;
+}
+
+.footer{
+    background:var(--footer);
+    color:white;
+    text-align:center;
+    padding:18px;
+    margin-top:60px;
+}
+
+/* Dark mode overrides for Bootstrap components */
+[data-theme="dark"] .btn-outline-primary{
+    color:white;
+    border-color:white;
+}
+
+[data-theme="dark"] .card p,
+[data-theme="dark"] .card h4,
+[data-theme="dark"] .card h2{
+    color:white;
+}
+
+[data-theme="dark"] .navbar{
+    background:var(--navbar) !important;
+}
+
+[data-theme="dark"] .btn-primary{
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+[data-theme="dark"] .btn-success{
+    background-color: #198754;
+    border-color: #198754;
+}
+
+[data-theme="dark"] .btn-danger{
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+[data-theme="dark"] .text-muted{
+    color: #adb5bd !important;
+}
+
+[data-theme="dark"] .stats-card h5,
+[data-theme="dark"] .stats-card h1{
+    color: white !important;
+}
+
+[data-theme="dark"] .notification-btn {
+    background: rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] .notification-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Force Bootstrap to use custom colors */
+[data-theme="dark"] {
+    --bs-body-bg: #121212;
+    --bs-body-color: #ffffff;
+    --bs-secondary-color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 18px;
+    }
+    
+    .nav-right {
+        gap: 8px;
+    }
+    
+    .theme-btn,
+    .notification-btn {
+        width: 38px !important;
+        height: 38px;
+        font-size: 16px;
+    }
+    
+    .container-main {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<div class="container d-flex justify-content-between align-items-center">
+
+<span class="navbar-brand">
+CivicPulse Smart Governance Platform
+</span>
+
+<div class="nav-right">
+
+    <!-- Notification Bell -->
+    <div class="notification-wrapper">
+        <a href="/notifications" class="notification-btn" title="Notifications">
+            <i class="bi bi-bell-fill"></i>
+        </a>
+        <span class="notification-badge" id="notificationBadge">0</span>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="btn btn-light theme-btn">
+        <i id="themeIcon" class="bi bi-moon-fill"></i>
+    </button>
+
+    <!-- Logout -->
+    <a href="/logout" class="btn btn-danger logout-btn">
+        Logout
+    </a>
+
+</div>
+
+</div>
+
+</nav>
+
+<div class="container container-main">
+
+<div class="welcome">
+
+<h2>Welcome to CivicPulse Dashboard 🎉</h2>
+
+<p>Manage citizen complaints efficiently.</p>
+
+</div>
+
+<div class="row g-4 mb-5">
+
+<div class="col-lg-3 col-md-6">
+
+<div class="stats-card total p-4 text-center">
+
+<h5>Total Complaints</h5>
+
+<h1 th:text="${totalComplaints}">0</h1>
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+<div class="stats-card pending p-4 text-center">
+
+<h5>Pending</h5>
+
+<h1 th:text="${pendingComplaints}">0</h1>
+
+</div>
+
+</div>
+<div class="col-lg-3 col-md-6">
+
+    <div class="stats-card inprogress p-4 text-center">
+
+        <h5>In Progress</h5>
+
+        <h1 th:text="${inProgressComplaints}">0</h1>
+
+    </div>
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+    <div class="stats-card resolved p-4 text-center">
+
+        <h5>Resolved</h5>
+
+        <h1 th:text="${resolvedComplaints}">0</h1>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- Action Cards -->
+
+<div class="row g-4">
+
+    <div class="col-md-6">
+
+        <div class="card p-4 text-center">
+
+            <div class="action-icon">
+                📝
+            </div>
+
+            <h4>Register Complaint</h4>
+
+            <p>
+                Create a new citizen complaint with location,
+                category and supporting evidence.
+            </p>
+
+            <a href="/complaint/register"
+               class="btn btn-primary mt-3">
+
+                Register Complaint
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+        <div class="card p-4 text-center">
+
+            <div class="action-icon">
+                📋
+            </div>
+
+            <h4>View Complaints</h4>
+
+            <p>
+                View, edit, update, assign and delete
+                registered complaints.
+            </p>
+
+            <a href="/complaints"
+               class="btn btn-success mt-3">
+
+                View Complaints
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<footer class="footer">
+
+    © 2026 CivicPulse Smart Governance Management Platform
+
+</footer>
+
+<!-- Hidden userId for JavaScript -->
+<input type="hidden" id="userId" th:value="${#authentication.name}">
+
+<script>
+
+// ==========================
+// THEME TOGGLE
+// ==========================
+
+const toggle = document.getElementById("themeToggle");
+const icon = document.getElementById("themeIcon");
+const badge = document.getElementById("notificationBadge");
+
+function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    
+    if (theme === "dark") {
+        icon.className = "bi bi-sun-fill";
+        toggle.classList.remove("btn-light");
+        toggle.classList.add("btn-warning");
+        
+        document.documentElement.style.setProperty('--bs-body-bg', '#121212');
+        document.documentElement.style.setProperty('--bs-body-color', '#ffffff');
+        document.documentElement.style.setProperty('--bs-secondary-color', '#ffffff');
+        document.documentElement.style.setProperty('--bs-tertiary-color', '#ffffff');
+        document.documentElement.style.setProperty('--bs-emphasis-color', '#ffffff');
+    } else {
+        icon.className = "bi bi-moon-fill";
+        toggle.classList.remove("btn-warning");
+        toggle.classList.add("btn-light");
+        
+        document.documentElement.style.removeProperty('--bs-body-bg');
+        document.documentElement.style.removeProperty('--bs-body-color');
+        document.documentElement.style.removeProperty('--bs-secondary-color');
+        document.documentElement.style.removeProperty('--bs-tertiary-color');
+        document.documentElement.style.removeProperty('--bs-emphasis-color');
+    }
+}
+
+// Event listener for theme toggle button
+toggle.addEventListener("click", function() {
+    var current = document.documentElement.getAttribute("data-theme");
+    setTheme(current === "dark" ? "light" : "dark");
+});
+
+// ==========================
+// NOTIFICATION FUNCTIONS
+// ==========================
+
+function updateNotificationBadge() {
+    var badge = document.getElementById('notificationBadge');
+    if (!badge) return;
+    
+    var userIdElement = document.getElementById('userId');
+    var userId = userIdElement ? userIdElement.value : '';
+    
+    if (userId && userId !== '' && userId !== 'null' && userId !== 'undefined') {
+        fetch('/notifications/api/user/' + userId + '/count')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                var count = data.count || 0;
+                badge.textContent = count;
+                if (count > 0) {
+                    badge.classList.remove('zero');
+                    badge.style.display = 'block';
+                } else {
+                    badge.classList.add('zero');
+                    badge.style.display = 'none';
+                }
+            })
+            .catch(function() {
+                console.error('Error fetching notification count');
+                badge.textContent = '0';
+                badge.classList.add('zero');
+                badge.style.display = 'none';
+            });
+    }
+}
+
+// ==========================
+// INITIALIZATION
+// ==========================
+
+// Load saved theme on page load
+document.addEventListener('DOMContentLoaded', function() {
+    var savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    updateNotificationBadge();
+});
+
+// Also ensure theme is applied when page loads completely
+window.addEventListener('load', function() {
+    var savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    updateNotificationBadge();
+});
+
+// Auto-refresh notification count every 30 seconds
+setInterval(function() {
+    updateNotificationBadge();
+}, 30000);
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

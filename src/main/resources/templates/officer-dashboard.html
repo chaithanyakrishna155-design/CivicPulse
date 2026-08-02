@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Officer Dashboard | CivicPulse</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+
+:root {
+    --bg: #f4f7fc;
+    --text: #212529;
+    --card-bg: #ffffff;
+    --shadow: 0 4px 10px rgba(0,0,0,.15);
+    --heading-color: #1565c0;
+    --table-header: #1565c0;
+    --table-striped: #f8f9fa;
+    --border-color: #dee2e6;
+    --badge-assigned: #ffc107;
+    --badge-progress: #0dcaf0;
+    --badge-resolved: #198754;
+    --navbar-bg: #1565c0;
+}
+
+[data-theme="dark"] {
+    --bg: #121212;
+    --text: #ffffff;
+    --card-bg: #1f1f1f;
+    --shadow: 0 5px 15px rgba(0,0,0,.6);
+    --heading-color: #4fc3f7;
+    --table-header: #0d47a1;
+    --table-striped: #2a2a2a;
+    --border-color: #404040;
+    --badge-assigned: #f57c00;
+    --badge-progress: #0277bd;
+    --badge-resolved: #1b5e20;
+    --navbar-bg: #0d1117;
+}
+
+* {
+    transition: all 0.3s ease;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background: var(--navbar-bg) !important;
+    padding: 15px 0;
+    box-shadow: var(--shadow);
+}
+
+.navbar-brand {
+    color: white !important;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.theme-btn {
+    width: 45px !important;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    border: none;
+}
+
+.logout-btn {
+    width: auto !important;
+}
+
+/* ===== CONTAINER ===== */
+.container-main {
+    padding: 30px 0 50px 0;
+}
+
+.page-title {
+    color: var(--heading-color);
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.page-subtitle {
+    text-align: center;
+    color: var(--text);
+    opacity: 0.7;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+/* ===== STATS CARDS ===== */
+.stats-card {
+    border: none;
+    border-radius: 15px;
+    color: white;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-card .stats-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+    opacity: 0.8;
+}
+
+.stats-card h5 {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-bottom: 3px;
+}
+
+.stats-card h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.stats-total { background: #1565c0; }
+.stats-assigned { background: #ff9800; }
+.stats-progress { background: #03a9f4; }
+.stats-resolved { background: #4caf50; }
+
+[data-theme="dark"] .stats-total { background: #0d47a1; }
+[data-theme="dark"] .stats-assigned { background: #e65100; }
+[data-theme="dark"] .stats-progress { background: #0277bd; }
+[data-theme="dark"] .stats-resolved { background: #1b5e20; }
+
+/* ===== CARD ===== */
+.card {
+    border-radius: 15px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text);
+    box-shadow: var(--shadow);
+}
+
+.card-header-custom {
+    background: var(--heading-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 15px 15px 0 0;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .card-header-custom {
+    background: #0d47a1;
+}
+
+/* ===== TABLE ===== */
+.table {
+    color: var(--text);
+    border-color: var(--border-color);
+    margin-bottom: 0;
+}
+
+.table-bordered {
+    border-color: var(--border-color);
+}
+
+.table-bordered th,
+.table-bordered td {
+    border-color: var(--border-color);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: var(--table-striped);
+}
+
+th {
+    text-align: center;
+    background: var(--table-header) !important;
+    color: white !important;
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 10px 8px;
+}
+
+td {
+    text-align: center;
+    vertical-align: middle;
+    color: var(--text);
+    border-color: var(--border-color);
+    font-size: 13px;
+}
+
+[data-theme="dark"] .table-hover > tbody > tr:hover {
+    background-color: #333333;
+}
+
+[data-theme="dark"] .table-primary {
+    background-color: #0d47a1 !important;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    font-size: 12px;
+    padding: 5px 12px;
+}
+
+.badge.bg-warning {
+    background-color: var(--badge-assigned) !important;
+    color: #000 !important;
+}
+
+[data-theme="dark"] .badge.bg-warning {
+    color: #fff !important;
+}
+
+.badge.bg-info {
+    background-color: var(--badge-progress) !important;
+    color: #fff !important;
+}
+
+.badge.bg-success {
+    background-color: var(--badge-resolved) !important;
+    color: #fff !important;
+}
+
+/* ===== EVIDENCE ===== */
+.evidence-img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid var(--border-color);
+}
+
+.evidence-video {
+    width: 100px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid var(--border-color);
+}
+
+/* ===== BUTTONS ===== */
+.btn-sm {
+    font-size: 12px;
+    padding: 5px 12px;
+    margin: 2px;
+}
+
+.btn i {
+    margin-right: 4px;
+}
+
+[data-theme="dark"] .btn-info {
+    background-color: #0277bd;
+    border-color: #0277bd;
+}
+
+[data-theme="dark"] .btn-success {
+    background-color: #1b5e20;
+    border-color: #1b5e20;
+}
+
+[data-theme="dark"] .btn-danger {
+    background-color: #b71c1c;
+    border-color: #b71c1c;
+}
+
+[data-theme="dark"] .text-primary {
+    color: #4fc3f7 !important;
+}
+
+[data-theme="dark"] .text-success {
+    color: #66bb6a !important;
+}
+
+[data-theme="dark"] .text-danger {
+    color: #ef5350 !important;
+}
+
+/* ===== MEDIA POPUP ===== */
+.media-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.media-modal img,
+.media-modal video {
+    max-width: 85%;
+    max-height: 85%;
+    border-radius: 10px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+.close-btn:hover {
+    color: #ff4444;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-state i {
+    font-size: 48px;
+    color: #888;
+    display: block;
+    margin-bottom: 15px;
+}
+
+/* ===== DARK MODE ===== */
+[data-theme="dark"] .theme-btn {
+    background: #1f1f1f;
+    color: white;
+    border: 1px solid #404040;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .container-main {
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .card {
+        padding: 10px !important;
+    }
+    
+    .table {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 6px 4px;
+    }
+    
+    .evidence-img {
+        width: 60px;
+        height: 45px;
+    }
+    
+    .evidence-video {
+        width: 70px;
+        height: 45px;
+    }
+    
+    .theme-btn {
+        width: 38px !important;
+        height: 38px;
+        font-size: 16px;
+    }
+    
+    .navbar-brand {
+        font-size: 18px;
+    }
+    
+    .page-title {
+        font-size: 22px;
+    }
+    
+    .stats-card {
+        padding: 15px;
+    }
+    
+    .stats-card h1 {
+        font-size: 22px;
+    }
+    
+    .btn-sm {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <span class="navbar-brand">
+            🏛️ CivicPulse Officer
+        </span>
+        <div class="nav-right">
+            <!-- Theme Toggle -->
+            <button id="themeToggle" class="btn btn-light theme-btn">
+                <i id="themeIcon" class="bi bi-moon-fill"></i>
+            </button>
+            <a href="/logout" class="btn btn-danger logout-btn">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="container container-main">
+
+    <h2 class="page-title">👮 Officer Dashboard</h2>
+    <p class="page-subtitle">Manage your assigned complaints efficiently</p>
+
+    <!-- Welcome Card -->
+    <div class="card shadow p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <h4 class="text-success">
+                    <i class="bi bi-person-check"></i> Welcome,
+                    <span th:text="${officer.fullName}">Officer</span>
+                </h4>
+                <p class="text-muted mb-0">
+                    <i class="bi bi-envelope"></i> <span th:text="${officer.email}">officer@example.com</span>
+                </p>
+            </div>
+            <div>
+                <span class="badge bg-primary" style="font-size: 14px; padding: 8px 16px;">
+                    <i class="bi bi-briefcase"></i> Officer
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stats-card stats-total">
+                <div class="stats-icon">📊</div>
+                <h5>Total Assigned</h5>
+                <h1 th:text="${totalAssignments}">0</h1>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stats-card stats-assigned">
+                <div class="stats-icon">📌</div>
+                <h5>Assigned</h5>
+                <h1 th:text="${assignedCount}">0</h1>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stats-card stats-progress">
+                <div class="stats-icon">🔄</div>
+                <h5>In Progress</h5>
+                <h1 th:text="${inProgressCount}">0</h1>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stats-card stats-resolved">
+                <div class="stats-icon">✅</div>
+                <h5>Resolved</h5>
+                <h1 th:text="${resolvedCount}">0</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assigned Complaints -->
+    <div class="card shadow">
+        <div class="card-header-custom">
+            <i class="bi bi-list-ul"></i> Assigned Complaints
+            <span class="badge bg-light text-dark ms-2" th:text="${#lists.size(assignments)}">0</span>
+        </div>
+
+        <div class="p-3">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover table-striped">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Location</th>
+                            <th>Evidence</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="assignment,stat : ${assignments}">
+                            <td th:text="${stat.index + 1}"></td>
+                            <td><span class="badge bg-secondary">#<span th:text="${assignment.complaint.id}"></span></span></td>
+                            <td th:text="${assignment.complaint.title}"></td>
+                            <td><span class="badge bg-info" th:text="${assignment.complaint.category}"></span></td>
+                            <td th:text="${assignment.complaint.location}"></td>
+
+                            <!-- Evidence -->
+                            <td>
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                                    <img th:if="${assignment.complaint.photoName != null}"
+                                         th:src="@{/uploads/{file}(file=${assignment.complaint.photoName})}"
+                                         class="evidence-img"
+                                         onclick="openImage(this.src)">
+
+                                    <video th:if="${assignment.complaint.videoName != null}"
+                                           class="evidence-video"
+                                           onclick="openVideo(this.querySelector('source').src)">
+                                        <source th:src="@{/uploads/{file}(file=${assignment.complaint.videoName})}"
+                                                type="video/webm">
+                                    </video>
+
+                                    <span th:if="${assignment.complaint.photoName == null and assignment.complaint.videoName == null}" 
+                                          style="opacity: 0.5; font-size: 12px;">
+                                        No Evidence
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- Status -->
+                            <td>
+                                <span class="badge bg-warning" th:if="${assignment.status=='ASSIGNED'}">
+                                    📌 ASSIGNED
+                                </span>
+                                <span class="badge bg-info" th:if="${assignment.status=='IN PROGRESS'}">
+                                    🔄 IN PROGRESS
+                                </span>
+                                <span class="badge bg-success" th:if="${assignment.status=='RESOLVED'}">
+                                    ✅ RESOLVED
+                                </span>
+                            </td>
+
+                            <!-- Action -->
+                            <td>
+                                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 3px;">
+                                    <a th:if="${assignment.status=='ASSIGNED'}"
+                                       th:href="@{/officer/start/{id}(id=${assignment.id})}"
+                                       class="btn btn-info btn-sm text-white"
+                                       onclick="return confirm('Start working on this complaint?');">
+                                        <i class="bi bi-play-circle"></i> Start
+                                    </a>
+
+                                    <a th:if="${assignment.status!='RESOLVED'}"
+                                       th:href="@{/officer/resolve/{id}(id=${assignment.id})}"
+                                       class="btn btn-success btn-sm"
+                                       onclick="return confirm('Mark this complaint as resolved?');">
+                                        <i class="bi bi-check-circle"></i> Resolve
+                                    </a>
+
+                                    <span th:if="${assignment.status=='RESOLVED'}" class="text-success fw-bold">
+                                        <i class="bi bi-check-circle-fill"></i> Completed
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(assignments)}">
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="bi bi-inbox"></i>
+                                    <p class="text-muted">No complaints assigned yet.</p>
+                                    <p style="font-size: 13px; opacity: 0.6;">You'll see complaints here once assigned by the admin.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- MEDIA POPUP -->
+<div id="mediaModal" class="media-modal">
+    <span class="close-btn" onclick="closeMedia()">&times;</span>
+    <img id="bigImage" style="display:none;">
+    <video id="bigVideo" controls style="display:none;"></video>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+// ==========================
+// THEME TOGGLE
+// ==========================
+
+const toggle = document.getElementById("themeToggle");
+const icon = document.getElementById("themeIcon");
+
+function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    if (theme === "dark") {
+        icon.className = "bi bi-sun-fill";
+        toggle.classList.remove("btn-light");
+        toggle.classList.add("btn-warning");
+    } else {
+        icon.className = "bi bi-moon-fill";
+        toggle.classList.remove("btn-warning");
+        toggle.classList.add("btn-light");
+    }
+}
+
+toggle.addEventListener("click", function() {
+    const current = document.documentElement.getAttribute("data-theme");
+    setTheme(current === "dark" ? "light" : "dark");
+});
+
+window.addEventListener("DOMContentLoaded", function() {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+});
+
+// ==========================
+// MEDIA FUNCTIONS
+// ==========================
+
+function openImage(src) {
+    var modal = document.getElementById("mediaModal");
+    var img = document.getElementById("bigImage");
+    var video = document.getElementById("bigVideo");
+
+    img.src = src;
+    img.style.display = "block";
+    video.style.display = "none";
+    modal.style.display = "flex";
+}
+
+function openVideo(src) {
+    var modal = document.getElementById("mediaModal");
+    var video = document.getElementById("bigVideo");
+    var img = document.getElementById("bigImage");
+
+    video.src = src;
+    video.style.display = "block";
+    img.style.display = "none";
+    modal.style.display = "flex";
+}
+
+function closeMedia() {
+    var modal = document.getElementById("mediaModal");
+    var video = document.getElementById("bigVideo");
+
+    video.pause();
+    video.src = "";
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    var modal = document.getElementById("mediaModal");
+    if (modal && event.target == modal) {
+        closeMedia();
+    }
+}
+
+</script>
+
+</body>
+
+</html>
