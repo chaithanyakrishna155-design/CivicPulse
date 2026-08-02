@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: civicpulse
+    runtime: java
+    buildCommand: "./mvnw clean package -DskipTests"
+    startCommand: "java -jar target/civicpulse-0.0.1-SNAPSHOT.jar"
